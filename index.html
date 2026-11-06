@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Переходник</title>
+        <style>
+           body {
+            
+            margin: 10px;
+            background: #3f173c;
+            color: aliceblue;
+            font-family: Arial, sans-serif;
+           }
+            .box {
+                display: flex;
+                width: 300px;
+                height: 40px;
+                padding: 15px;
+                background-color: blueviolet;
+
+                border-radius: 9px;
+                border: none;
+                align-items: center;
+                position: relative;
+                
+            }
+
+            .menu-button{
+                height: 50px;
+                width: 50px;
+                border-radius: 5px;
+                border: none;
+                margin-left:auto;
+                background-color: #3f173c;
+                color: white;
+            }
+            .menu-button:hover{
+                background-color: gray;
+            }
+            .dropdown {
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+                transition: opacity 0.25s, visibility 0.25s, transform 0.25s;
+                width: 150px;
+                position: absolute;
+                padding: 10px;
+                background-color: blueviolet;
+                border-radius: 10px;
+                top: 100%;
+                right: 0;
+                
+
+            }
+            .dropdown.open {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+            .dropdown a {
+                display: block;
+                padding: 15px;
+                text-decoration: none;
+                color: white;
+                border-radius: 10px;
+                background-color: rgb(154, 72, 231);
+
+            }
+            .dropdown a:hover {
+                background-color: rgb(105, 17, 187);
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="box">
+            <h2>Переходник</h2>
+            <button class="menu-button" onclick="toggleMenu()">Меню</button>
+            <div class="dropdown" id="dropdown" >
+                 <a href="https://t.me/siqyz">Основной канал</a>
+                <a href="https://t.me/SiqyalStarsbot">Бот</a>
+            </div>
+        </div>
+        
+        <script>
+            function toggleMenu() {
+                let menu = document.getElementById("dropdown")
+                menu.classList.toggle("open")
+                }
+            document.addEventListener("click" ,function(event) {
+                let menu = document.getElementById("dropdown")
+                let button = document.querySelector(".menu-button");
+
+                if (!menu.contains(event.target) && !button.contains(event.target)) {
+                    menu.classList.remove("open")
+                }
+            });
+        </script>
+    </body>
+</html>

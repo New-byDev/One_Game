@@ -104,6 +104,30 @@
                 color: #929191;
                 font-size: 13px;
             }
+            .avatar-frame {
+                width: 110px;
+                height: 110px;
+                padding: 4px;
+                border-radius: 50%;
+
+                background: linear-gradient(
+                    50deg,
+                    #ff0000,
+                    #000000,
+                    #646464
+                );
+                box-sizing: border-box;
+            }
+            .avatar-frame img {
+                width: 100%;
+                height: 100%;
+
+                border-radius: 50%;
+                object-fit: cover;
+                box-sizing: border-box;
+                background: #242424;
+                border:4px solid #121212;
+            }
 
         </style>
 
@@ -138,13 +162,17 @@
             </section>
             <section class="window" id="profile">
                 <div class="profile-card">
+                    <div class="avatar-frame">
+                        <img id="telegram-avatar" src="" alt="">
+                    </div>
                     <p>ID: <span id="telegram-id">—</span></p>
+                    
                     <p>Имя: <span id="telegram-name">—</span></p>
                     <p>Username: <span id="telegram-username">—</span></p>
 
                     <div class="balance-box">
                         <p>Ваш баланс</p>
-                        <h2 id="balance">Загрузка...</h2>
+                        <p id="balance">Загрузка...</p>
                     </div>
                 </div>
             </section>
@@ -231,6 +259,13 @@
                 status.textContent = "Telegram подключён!";
 
                 const user = result.user;
+                const avatar = document.getElementById("telegram-avatar");
+
+                if (user.photo_url) {
+                    avatar.src = user.photo_url;
+                } else {
+                    avatar.alt = "Фотография профиля недоступна";
+                }
 
                 document.getElementById("telegram-id").textContent = user.id;
 

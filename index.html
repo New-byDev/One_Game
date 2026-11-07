@@ -1,102 +1,252 @@
 <!DOCTYPE html>
 <html lang="ru">
-    
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Переходник</title>
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+        <title>ZombixUP</title>
         <style>
-           body {
-            
-            margin: 10px;
-            background: #3f173c;
-            color: aliceblue;
-            font-family: Arial, sans-serif;
-           }
-            .box {
-                display: flex;
-                width: 300px;
-                height: 40px;
-                padding: 15px;
-                background-color: blueviolet;
-
-                border-radius: 9px;
-                border: none;
-                align-items: center;
-                position: relative;
-                
-            }
-
-            .menu-button{
-                height: 50px;
-                width: 50px;
-                border-radius: 5px;
-                border: none;
-                margin-left:auto;
-                background-color: #3f173c;
+            body {
+                margin: 0;
+                background: #121212;
                 color: white;
+                font-family: Arial, sans-serif;
             }
-            .menu-button:hover{
-                background-color: gray;
+            .top-panel {
+                display: flex;
+                align-items: center;
+                background: #1b1b1b;
+                padding: 10px 20px;
+                position: relative;
+            }
+            .menu-button {
+                height: 30px;
+                width: 30px;
+                background: #2e2e2e;
+                margin-left: auto;
+                border: none;
+                color: white;
+                font-size: 12px;
+                border-radius: 5px;
+            }
+            .menu-button:hover {
+                background: #242424;
             }
             .dropdown {
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-10px);
-                transition: opacity 0.25s, visibility 0.25s, transform 0.25s;
-                width: 150px;
-                position: absolute;
+                display: flex;
+                gap: 10px;
+                width: 100%;
                 padding: 10px;
-                background-color: blueviolet;
-                border-radius: 10px;
-                top: 100%;
-                right: 0;
-                
+                border-radius: 8px;
+                background: #242424;
+                box-sizing: border-box;
+                margin: 0;
 
+                max-height: 0px;
+                padding: 0 10px;
+                overflow: hidden;
+
+                transition: max-height 0.3s ease, padding 0.3s ease;
             }
             .dropdown.open {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-            }
-            .dropdown a {
-                display: block;
-                padding: 15px;
-                text-decoration: none;
-                color: white;
-                border-radius: 10px;
-                background-color: rgb(154, 72, 231);
+                max-height: 100px;
+                padding: 10px;
 
             }
+            .dropdown a {
+                flex: 1;
+                text-align:center;
+                display: block;
+                padding: 10px;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+
             .dropdown a:hover {
-                background-color: rgb(105, 17, 187);
+                background: #1b1b1b;
+            }
+            .dropdown a.active-link {
+                background: #383838;
+                color: #65db83;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .window {
+                display: none;
+            }
+
+            .window.active {
+                display: block;
+                animation: windowShow 0.25s ease;
+            }
+            @keyframes windowShow {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .header-info h2 {
+                margin: 0;
+                font-size: 21px;
+            }
+            .header-info p {
+                margin:4px 0 0 ;
+                color: #929191;
+                font-size: 13px;
             }
 
         </style>
-    </head>
-    <body>
-        <div class="box">
-            <h2>Переходник</h2>
-            <button class="menu-button" onclick="toggleMenu()">Меню</button>
-            <div class="dropdown" id="dropdown" >
-                 <a href="https://t.me/siqyz">Основной канал</a>
-                <a href="https://t.me/SiqyalStarsbot">Бот</a>
-            </div>
-        </div>
+
+    
         
+    </head>
+
+    <body>
+        <header class="top-panel">
+            <div class="header-info">
+                <h2>ZombixUP</h2>
+                <p id="current-tab">Главная</p>
+            </div>
+            <button class="menu-button" onclick="toggleMenu()">☰</button>
+            
+        </header>
+        <div class="dropdown" id="dropdown">
+                <a href="#" data-window="home" class="active-link">Главная</a>
+                <a href="#" data-window="games">Игры</a>
+                <a href="#" data-window="setting">Настройки</a>
+                <a href="#" data-window="profile">Профиль</a>
+
+            </div>
+        <main class="content">
+            <section class="window active" id="home">
+                <p>Основной контент</p>
+                <p id="telegram-status">Проверяем Telegram...</p>
+            </section>
+
+            <section class="window" id="games">
+                <p>Здесь игры :D</p>
+            </section>
+            <section class="window" id="profile">
+                <div class="profile-card">
+                    <p>ID: <span id="telegram-id">—</span></p>
+                    <p>Имя: <span id="telegram-name">—</span></p>
+                    <p>Username: <span id="telegram-username">—</span></p>
+
+                    <div class="balance-box">
+                        <p>Ваш баланс</p>
+                        <h2 id="balance">Загрузка...</h2>
+                    </div>
+                </div>
+            </section>
+
+            <section class="window" id="setting">
+                <p>Тута настройки</p>
+            </section>
+            
+        </main>
         <script>
             function toggleMenu() {
-                let menu = document.getElementById("dropdown")
-                menu.classList.toggle("open")
-                }
-            document.addEventListener("click" ,function(event) {
-                let menu = document.getElementById("dropdown")
-                let button = document.querySelector(".menu-button");
+                let menu = document.getElementById("dropdown");
+                menu.classList.toggle("open");
 
-                if (!menu.contains(event.target) && !button.contains(event.target)) {
-                    menu.classList.remove("open")
-                }
-            });
+            }
         </script>
     </body>
+    <script>
+        const menuLinks = document.querySelectorAll(".dropdown a");
+
+            menuLinks.forEach(link => {
+                link.addEventListener("click", function(event) {
+                    event.preventDefault();
+
+            const windowId = this.dataset.window;
+                menuLinks.forEach(link => {
+                link.classList.remove("active-link");
+            });
+
+            this.classList.add("active-link");
+            const tabName = this.textContent;
+                document.getElementById("current-tab").textContent = tabName;
+
+                document.querySelectorAll(".window").forEach(window => {
+                    window.classList.remove("active");
+                });
+
+                document.getElementById(windowId).classList.add("active");
+
+                document.getElementById("dropdown").classList.remove("open");
+            });
+        });
+
+        
+    </script>
+
+    
+    <script>
+        const tg = window.Telegram.WebApp;
+
+        tg.ready();
+
+        const API_URL = "https://zombixup-tg.mirikpirik2009.workers.dev";
+
+        const status = document.getElementById("telegram-status");
+
+        async function checkTelegramAuth() {
+
+            const initData = tg.initData;
+
+            if (!initData) {
+                status.textContent = "Тестовый режим";
+                return;
+            }
+
+            status.textContent = "Проверяем авторизацию...";
+
+            try {
+                const response = await fetch(API_URL + "/telegram-test", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "tma " + initData
+                    }
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    status.textContent = "Ошибка авторизации";
+                    console.error("Ошибка:", result);
+                    return;
+                }
+
+                status.textContent = "Telegram подключён!";
+
+                const user = result.user;
+
+                document.getElementById("telegram-id").textContent = user.id;
+
+                document.getElementById("telegram-name").textContent =
+                    user.first_name;
+
+                document.getElementById("telegram-username").textContent =
+                    user.username ? "@" + user.username : "Не указан";
+
+            } catch (error) {
+                status.textContent = "Ошибка подключения к серверу";
+                console.error(error);
+            }
+        }
+
+    checkTelegramAuth();
+</script>
+
 </html>

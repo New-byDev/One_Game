@@ -6,11 +6,16 @@
         <script src="https://telegram.org/js/telegram-web-app.js"></script>
         <title>ZombixUP</title>
         <style>
+            * {
+                box-sizing: border-box;
+            }
             body {
                 margin: 0;
                 background: #121212;
                 color: white;
                 font-family: Arial, sans-serif;
+                overflow-x: hidden;
+                width: 100%;
             }
             .top-panel {
                 display: flex;
@@ -128,7 +133,39 @@
                 background: #242424;
                 border:4px solid #121212;
             }
-
+            .balance-box {
+                display: flex;
+                align-items: baseline;
+            }
+            .profile-card {
+                display: flex;
+                align-items:flex-start ;
+                gap: 15px;
+                background: #1b1b1b;
+                padding: 20px;
+                border-radius: 20px;
+            }
+            .info-prof {
+                line-height: 0.2;
+            }
+            .admp {
+                display: flex;
+                align-items: center !important;
+                justify-content: center !important;
+                text-decoration: none;
+                width: 150px;
+                height: 50px;
+                color: white;
+                border-radius: 10px;
+                background: #222222;
+                margin: 0;
+                
+                
+            }
+            .admp:hover {
+                background: #1b1b1b;
+            }
+            
         </style>
 
     
@@ -149,7 +186,7 @@
                 <a href="#" data-window="games">Игры</a>
                 <a href="#" data-window="setting">Настройки</a>
                 <a href="#" data-window="profile">Профиль</a>
-
+                
             </div>
         <main class="content">
             <section class="window active" id="home">
@@ -161,26 +198,36 @@
                 <p>Здесь игры :D</p>
             </section>
             <section class="window" id="profile">
+                
                 <div class="profile-card">
+
                     <div class="avatar-frame">
                         <img id="telegram-avatar" src="" alt="">
                     </div>
-                    <p>ID: <span id="telegram-id">—</span></p>
+                    <div class="info-prof">
+                        <p class="idp">ID: <span id="telegram-id">—</span></p>
                     
-                    <p>Имя: <span id="telegram-name">—</span></p>
-                    <p>Username: <span id="telegram-username">—</span></p>
-
-                    <div class="balance-box">
-                        <p>Ваш баланс</p>
-                        <p id="balance">Загрузка...</p>
+                        <p class="name">Имя: <span id="telegram-name">—</span></p>
+                        <p class="usern">Username: <span id="telegram-username">—</span></p>
+                    
+                        <div class="balance-box">
+                            <p class="baln">Ваш баланс: </p>
+                            <p id="balance">Загрузка...</p>
+                        </div>
                     </div>
                 </div>
+                <a class="admp" href="#" data-window="admin" id="admin-menu-item" hidden>
+                    Админ-панель
+                </a>
             </section>
 
             <section class="window" id="setting">
                 <p>Тута настройки</p>
             </section>
-            
+            <section class="window" id="admin">
+                <h2>Админ-панель</h2>
+                <p>Добро пожаловать, администратор!</p>
+            </section>
         </main>
         <script>
             function toggleMenu() {
@@ -217,6 +264,51 @@
         });
 
         
+    </script>
+    <script>
+        const adminMenuItem = document.getElementById("admin-menu-item");
+
+            adminMenuItem.addEventListener("click", async function(event) {
+            event.preventDefault();
+
+        const initData = tg.initData;
+
+        if (!initData) {
+            alert("Необходимо открыть сайт через Telegram");
+            return;
+        }
+
+        try {
+            const response = await fetch(API_URL + "/admin-check", {
+                method: "GET",
+                headers: {
+                "Authorization": "tma " + initData
+                }
+            });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            alert("Доступ запрещён");
+            return;
+        }
+
+        // Скрываем остальные окна
+        document.querySelectorAll(".window").forEach(window => {
+            window.classList.remove("active");
+        });
+
+        // Открываем админ-панель
+        document.getElementById("admin").classList.add("active");
+
+        // Меняем название вкладки
+        document.getElementById("current-tab").textContent = "Админ-панель";
+
+    } catch (error) {
+        console.error(error);
+        alert("Ошибка подключения к серверу");
+    }
+});
     </script>
 
     
@@ -255,6 +347,9 @@
                     console.error("Ошибка:", result);
                     return;
                 }
+                const adminMenuItem = document.getElementById("admin-menu-item");
+
+                adminMenuItem.hidden = result.isAdmin !== true;
 
                 status.textContent = "Telegram подключён!";
 
